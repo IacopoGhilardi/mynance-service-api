@@ -1,0 +1,21 @@
+# .air.toml
+
+[build]
+# Binary file name
+bin = "main"
+
+# Watch these directories for changes
+include_ext = ["go"]
+
+# Exclude these directories from being watched
+exclude_dir = ["vendor", "tmp"]
+
+# Exclude files by filename
+exclude_file = ["_test.go"]
+
+# Command to build the app
+cmd = "go build -o cmd/app/main.go"
+
+[runner]
+# Command to run the built binary
+cmd = "./main"
