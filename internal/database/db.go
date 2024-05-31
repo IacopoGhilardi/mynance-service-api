@@ -1,6 +1,9 @@
 package database
 
 import (
+	"fmt"
+
+	appConfig "github.com/iacopoghilardi/mynance-service-api/internal/config"
 	"github.com/iacopoghilardi/mynance-service-api/pkg/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -12,15 +15,15 @@ var db *gorm.DB
 func ConnectToDb() error {
 	//Todo: prendere la string dalle configs
 	logger.Info("Connecting to db")
-	connStr := ""
-	//host := config.AppConfig.DBHost
-	//port := config.AppConfig.DBPort
-	//user := config.AppConfig.DBUser
-	//password := config.AppConfig.DBPass
-	//dbname := config.AppConfig.DBName
 
-	//connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
-	//	host, user, password, dbname, port)
+	configs := appConfig.AppConfig
+	host := configs.DBHost
+	port := configs.DBPort
+	user := configs.DBUser
+	password := configs.DBPass
+	dbname := configs.DBName
+
+	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Europe/Rome", host, user, password, dbname, port)
 
 	var err error
 	dsn := "host=localhost user=myuser password=mypassword dbname=mydatabase port=5432 sslmode=disable TimeZone=Europe/Rome"
