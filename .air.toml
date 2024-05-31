@@ -14,7 +14,7 @@ exclude_dir = ["vendor", "tmp"]
 exclude_file = ["_test.go"]
 
 # Command to build the app
-cmd = "go build -o cmd/app/main.go"
+cmd = "go build -o cmd/mynance-service-api/main.go"
 
 [runner]
 # Command to run the built binary

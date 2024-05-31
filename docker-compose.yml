@@ -11,9 +11,11 @@ services:
       - /app/bin
     ports:
       - "8080:8080"
-    command: air
+    depends_on:
+      - db
+      - migrate
     environment:
-      - AIR_WATCHER_DELAY=500ms
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/mynance?sslmode=disable
 
   db:
     image: postgres:14
@@ -25,6 +27,14 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+
+  migrate:
+    image: golang:1.22.1
+    command: ["migrate", "-path", "/app/migrations", "-database", "postgres://postgres:postgres@db:5432/mynance?sslmode=disable", "up"]
+    volumes:
+      - .:/app
+    depends_on:
+      - db
 
 volumes:
   db_data:

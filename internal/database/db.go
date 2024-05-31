@@ -1,47 +1,59 @@
 package database
 
 import (
-	"database/sql"
 	"github.com/iacopoghilardi/mynance-service-api/pkg/utils"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var logger = utils.Logger
-var db *sql.DB
+var db *gorm.DB
 
-func ConnectToDb() {
+func ConnectToDb() error {
 	//Todo: prendere la string dalle configs
 	logger.Info("Connecting to db")
 	connStr := ""
+	//host := config.AppConfig.DBHost
+	//port := config.AppConfig.DBPort
+	//user := config.AppConfig.DBUser
+	//password := config.AppConfig.DBPass
+	//dbname := config.AppConfig.DBName
 
-	logger.Info("Connecting to db")
+	//connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
+	//	host, user, password, dbname, port)
+
+	var err error
+	dsn := "host=localhost user=myuser password=mypassword dbname=mydatabase port=5432 sslmode=disable TimeZone=Europe/Rome"
 
 	if connStr == "" {
 		logger.Info("Not connected")
-		return
+		return nil
 	}
 
-	var err error
-	db, err = sql.Open("postgres", connStr)
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		logger.Error("Failed to open the DB connection: ", err)
-		return
-	}
-
-	if err := db.Ping(); err != nil {
-		logger.Error("Failed to connect to the database: ", err)
-		return
+		return err
 	}
 
 	logger.Info("Successfully connected to the database")
+	return nil
 }
 
 func CloseDb() {
-	if db != nil {
-		err := db.Close()
-		if err != nil {
-			logger.Error("Error closing the database: ", err)
-		} else {
-			logger.Info("Database connection closed")
-		}
+	sqlDB, err := db.DB()
+	if err != nil {
+		logger.Error("Error getting the underlying SQL DB: ", err)
+		return
 	}
+
+	if err := sqlDB.Close(); err != nil {
+		logger.Error("Error closing the database: ", err)
+	} else {
+		logger.Info("Database connection closed")
+	}
+}
+
+func GetDB() *gorm.DB {
+	return db
 }
