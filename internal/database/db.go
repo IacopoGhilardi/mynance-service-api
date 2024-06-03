@@ -13,9 +13,7 @@ var logger = utils.Logger
 var db *gorm.DB
 
 func ConnectToDb() error {
-	//Todo: prendere la string dalle configs
 	logger.Info("Connecting to db")
-
 	configs := appConfig.AppConfig
 	host := configs.DBHost
 	port := configs.DBPort
@@ -26,14 +24,12 @@ func ConnectToDb() error {
 	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Europe/Rome", host, user, password, dbname, port)
 
 	var err error
-	dsn := "host=localhost user=myuser password=mypassword dbname=mydatabase port=5432 sslmode=disable TimeZone=Europe/Rome"
-
 	if connStr == "" {
 		logger.Info("Not connected")
 		return nil
 	}
 
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
 		logger.Error("Failed to open the DB connection: ", err)
 		return err

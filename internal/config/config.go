@@ -17,6 +17,7 @@ var AppConfig Config
 
 func InitConfig() error {
 	viper.SetConfigName(".env")
+	viper.SetConfigType("env")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
 
