@@ -1,4 +1,4 @@
-package user
+package service
 
 import (
 	"context"
@@ -9,7 +9,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateUser(ctx context.Context, user *models.User) error {
+type UserService struct{}
+
+func (s *UserService) CreateUser(ctx context.Context, user *models.User) error {
 	db := database.GetDB().WithContext(ctx)
 	result := db.Create(user)
 	if result.Error != nil {
@@ -18,7 +20,7 @@ func CreateUser(ctx context.Context, user *models.User) error {
 	return nil
 }
 
-func GetUser(ctx context.Context, id int64) (*models.User, error) {
+func (s *UserService) GetUser(ctx context.Context, id int64) (*models.User, error) {
 	db := database.GetDB().WithContext(ctx)
 	var user models.User
 	result := db.First(&user, id)
@@ -31,7 +33,7 @@ func GetUser(ctx context.Context, id int64) (*models.User, error) {
 	return &user, nil
 }
 
-func UpdateUser(ctx context.Context, user *models.User) error {
+func (s *UserService) UpdateUser(ctx context.Context, user *models.User) error {
 	db := database.GetDB().WithContext(ctx)
 	result := db.Save(user)
 	if result.Error != nil {
@@ -40,7 +42,7 @@ func UpdateUser(ctx context.Context, user *models.User) error {
 	return nil
 }
 
-func DeleteUser(ctx context.Context, id int64) error {
+func (s *UserService) DeleteUser(ctx context.Context, id int64) error {
 	db := database.GetDB().WithContext(ctx)
 	result := db.Delete(&models.User{}, id)
 	if result.Error != nil {
@@ -49,7 +51,7 @@ func DeleteUser(ctx context.Context, id int64) error {
 	return nil
 }
 
-func GetAllUsers(ctx context.Context) ([]models.User, error) {
+func (s *UserService) GetAllUsers(ctx context.Context) ([]models.User, error) {
 	db := database.GetDB().WithContext(ctx)
 	var users []models.User
 	result := db.Find(&users)
