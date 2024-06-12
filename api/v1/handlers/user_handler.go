@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	service "github.com/iacopoghilardi/mynance-service-api/api/v1/services"
+	"github.com/iacopoghilardi/mynance-service-api/internal/utils"
 	"github.com/iacopoghilardi/mynance-service-api/models"
 )
 
@@ -42,10 +43,10 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 		return
 	}
 	if user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		c.JSON(http.StatusNotFound, utils.GenerateFailedResponse("User not found"))
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, utils.GenerateSuccessResponse(user))
 }
 
 func (h *UserHandler) UpdateUser(c *gin.Context) {
