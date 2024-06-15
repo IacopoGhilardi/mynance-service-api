@@ -3,7 +3,6 @@ package utils
 type successHttpResponse[T any] struct {
 	Status string `json:"status"`
 	Data   T      `json:"data"`
-	Error  T      `json:"error"`
 }
 
 type failHttpResponse[T any] struct {
