@@ -52,8 +52,13 @@ func (s *UserService) UpdateUser(ctx context.Context, id int64, user *models.Use
 		return result.Error
 	}
 
+	hashedPassword, err := utils.HashPassword(user.Password)
+	if err != nil {
+		return err
+	}
+
 	userToUpdate.Email = user.Email
-	userToUpdate.Password = user.Password
+	userToUpdate.Password = hashedPassword
 
 	result = db.Save(&userToUpdate)
 	if result.Error != nil {
