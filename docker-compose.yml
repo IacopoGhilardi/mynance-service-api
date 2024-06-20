@@ -1,40 +1,30 @@
 version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app
-      - /app/go/pkg/mod
-      - /app/bin
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-      - migrate
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/mynance?sslmode=disable
-
   db:
-    image: postgres:14
+    image: postgres
+    restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mynance
+      POSTGRES_USER: mydget
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydget
     ports:
       - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
-  migrate:
-    image: golang:1.22.1
-    command: ["migrate", "-path", "/app/migrations", "-database", "postgres://postgres:postgres@db:5432/mynance?sslmode=disable", "up"]
-    volumes:
-      - .:/app
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mydget"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  api:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - PORT=8080
+      - DB_HOST=db
+      - DB_USER=mydget
+      - DB_PASSWORD=mypassword
+      - DB_NAME=mydget
     depends_on:
-      - db
-
-volumes:
-  db_data:
+      db:
+        condition: service_healthy
