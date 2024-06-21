@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"github.com/iacopoghilardi/mynance-service-api/pkg/utils"
 
 	"github.com/iacopoghilardi/mynance-service-api/internal/database"
 	"github.com/iacopoghilardi/mynance-service-api/models"
@@ -12,17 +11,8 @@ import (
 
 type UserService struct{}
 
-func (s *UserService) CreateUser(ctx context.Context, userData *models.User) error {
+func (s *UserService) CreateUser(ctx context.Context, user *models.User) error {
 	db := database.GetDB().WithContext(ctx)
-	hashedPassword, err := utils.HashPassword(userData.Password)
-	if err != nil {
-		return err
-	}
-
-	user := &models.User{
-		Email:    userData.Email,
-		Password: hashedPassword,
-	}
 	result := db.Create(user)
 	if result.Error != nil {
 		return result.Error
@@ -46,21 +36,7 @@ func (s *UserService) GetUser(ctx context.Context, id int64) (*models.User, erro
 func (s *UserService) UpdateUser(ctx context.Context, id int64, user *models.User) error {
 	db := database.GetDB().WithContext(ctx)
 
-	var userToUpdate models.User
-	result := db.First(&userToUpdate, id)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return result.Error
-	}
-
-	hashedPassword, err := utils.HashPassword(user.Password)
-	if err != nil {
-		return err
-	}
-
-	userToUpdate.Email = user.Email
-	userToUpdate.Password = hashedPassword
-
-	result = db.Save(&userToUpdate)
+	result := db.Save(user)
 	if result.Error != nil {
 		return result.Error
 	}
