@@ -1,6 +1,8 @@
 package app
 
 import (
+	v1Handlers "github.com/iacopoghilardi/mynance-service-api/api/v1/handlers"
+	v1Services "github.com/iacopoghilardi/mynance-service-api/api/v1/services"
 	"github.com/iacopoghilardi/mynance-service-api/internal/config"
 	"github.com/iacopoghilardi/mynance-service-api/internal/database"
 	"github.com/iacopoghilardi/mynance-service-api/internal/router"
@@ -23,6 +25,9 @@ func InitApp() error {
 		panic(err)
 	}
 	defer database.CloseDb()
+
+	v1Services.InitServices()
+	v1Handlers.InitHandlers()
 
 	err = router.InitRouter()
 	if err != nil {

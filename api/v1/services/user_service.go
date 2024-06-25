@@ -4,15 +4,20 @@ import (
 	"context"
 	"errors"
 
-	"github.com/iacopoghilardi/mynance-service-api/internal/database"
 	"github.com/iacopoghilardi/mynance-service-api/models"
 	"gorm.io/gorm"
 )
 
-type UserService struct{}
+type UserService struct {
+	db *gorm.DB
+}
+
+func NewUserService(db *gorm.DB) *UserService {
+	return &UserService{db: db}
+}
 
 func (s *UserService) CreateUser(ctx context.Context, user *models.User) error {
-	db := database.GetDB().WithContext(ctx)
+	db := s.db.WithContext(ctx)
 	result := db.Create(user)
 	if result.Error != nil {
 		return result.Error
@@ -21,7 +26,7 @@ func (s *UserService) CreateUser(ctx context.Context, user *models.User) error {
 }
 
 func (s *UserService) GetUser(ctx context.Context, id int64) (*models.User, error) {
-	db := database.GetDB().WithContext(ctx)
+	db := s.db.WithContext(ctx)
 	var user models.User
 	result := db.First(&user, id)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -34,7 +39,7 @@ func (s *UserService) GetUser(ctx context.Context, id int64) (*models.User, erro
 }
 
 func (s *UserService) UpdateUser(ctx context.Context, id int64, user *models.User) error {
-	db := database.GetDB().WithContext(ctx)
+	db := s.db.WithContext(ctx)
 
 	result := db.Save(user)
 	if result.Error != nil {
@@ -44,7 +49,7 @@ func (s *UserService) UpdateUser(ctx context.Context, id int64, user *models.Use
 }
 
 func (s *UserService) DeleteUser(ctx context.Context, id int64) error {
-	db := database.GetDB().WithContext(ctx)
+	db := s.db.WithContext(ctx)
 	result := db.Delete(&models.User{}, id)
 	if result.Error != nil {
 		return result.Error
@@ -53,7 +58,7 @@ func (s *UserService) DeleteUser(ctx context.Context, id int64) error {
 }
 
 func (s *UserService) GetAllUsers(ctx context.Context) ([]models.User, error) {
-	db := database.GetDB().WithContext(ctx)
+	db := s.db.WithContext(ctx)
 	var users []models.User
 	result := db.Find(&users)
 	if result.Error != nil {

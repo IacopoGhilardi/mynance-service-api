@@ -2,8 +2,6 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	v1Handler "github.com/iacopoghilardi/mynance-service-api/api/v1/handlers"
-	service "github.com/iacopoghilardi/mynance-service-api/api/v1/services"
 )
 
 func SetupRoutes(r *gin.Engine) {
@@ -13,5 +11,5 @@ func SetupRoutes(r *gin.Engine) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
-	SetupUserRoutes(prefix, v1Handler.NewUserHandler(&service.UserService{}))
+	SetupUserRoutes(prefix)
 }
