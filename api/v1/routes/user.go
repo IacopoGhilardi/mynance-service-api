@@ -16,7 +16,9 @@ func SetupUserRoutes(version *gin.RouterGroup) {
 	userRoutes.DELETE("/:id", userHandler.DeleteUser)
 	userRoutes.GET("/", userHandler.GetAllUsers)
 
-	//Profile
-	//userRoutes.GET("/:id/profile", handler.GetProfile)
-	//userRoutes.GET("/:id/profile", handler.GetProfile)
+	profileHandler := handlers.V1Handlers.ProfileHandler
+
+	userRoutes.GET("/:id/profile", profileHandler.GetProfile)
+	userRoutes.POST("/:id/profile", profileHandler.UpdateProfile)
+	userRoutes.PUT("/:id/profile", profileHandler.UpdateProfile)
 }

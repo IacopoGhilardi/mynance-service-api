@@ -5,6 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"strconv"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	service "github.com/iacopoghilardi/mynance-service-api/api/v1/services"
 	"github.com/iacopoghilardi/mynance-service-api/internal/app"
@@ -13,11 +19,6 @@ import (
 	"github.com/iacopoghilardi/mynance-service-api/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"strconv"
-	"testing"
 )
 
 type EndpointTestSuite struct {
@@ -133,7 +134,7 @@ func (suite *EndpointTestSuite) TestCreateUserEndpoint() {
 	assert.Equal(t, 1, len(users))
 }
 
-func (suite *EndpointTestSuite) TestUpdateUserEndpoint() {
+func (suite *EndpointTestSuite) TestUpdateUser() {
 	t := suite.T()
 
 	user := models.User{
