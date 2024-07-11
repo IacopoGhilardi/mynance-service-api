@@ -2,6 +2,7 @@ package tests
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 	"time"
 
@@ -24,15 +25,18 @@ func CreatePostgresContainer(ctx context.Context) (*PostgresContainer, error) {
 		postgres.WithPassword("mypassword"),
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).WithStartupTimeout(5*time.Second)),
+				WithOccurrence(2).WithStartupTimeout(30*time.Second)),
 	)
+
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create PostgreSQL container: %w", err)
 	}
-	connStr, err := pgContainer.ConnectionString(ctx, "sslmode=disable")
+
+	connStr, err := pgContainer.ConnectionString(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get connection string: %w", err)
 	}
+	fmt.Printf("Database connection string: %s\n", connStr)
 
 	return &PostgresContainer{
 		PostgresContainer: pgContainer,

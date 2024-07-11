@@ -3,8 +3,9 @@ package service
 import (
 	"context"
 	"errors"
-
+	"fmt"
 	"github.com/iacopoghilardi/mynance-service-api/models"
+	"github.com/iacopoghilardi/mynance-service-api/pkg/utils"
 	"gorm.io/gorm"
 )
 
@@ -17,11 +18,14 @@ func NewUserService(db *gorm.DB) *UserService {
 }
 
 func (s *UserService) CreateUser(ctx context.Context, user *models.User) error {
+	utils.Logger.Info("Creating new user: " + user.Email)
 	db := s.db.WithContext(ctx)
 	result := db.Create(user)
 	if result.Error != nil {
 		return result.Error
 	}
+
+	utils.Logger.Info("Created!")
 	return nil
 }
 
@@ -40,11 +44,21 @@ func (s *UserService) GetUser(ctx context.Context, id int64) (*models.User, erro
 
 func (s *UserService) UpdateUser(ctx context.Context, id int64, user *models.User) error {
 	db := s.db.WithContext(ctx)
-
-	result := db.Save(user)
-	if result.Error != nil {
-		return result.Error
+	var existingUser models.User
+	if err := db.First(&existingUser, id).Error; err != nil {
+		return err
 	}
+
+	fmt.Println("Arrivi qua a fare l'update")
+	existingUser.Email = user.Email
+
+	fmt.Println("Arrivi qua a fare l'update: " + user.Email)
+	existingUser.Password = user.Password
+
+	if err := db.Save(&existingUser).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 

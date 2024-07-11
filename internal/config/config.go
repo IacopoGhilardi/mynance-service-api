@@ -1,8 +1,11 @@
 package config
 
 import (
+	"github.com/iacopoghilardi/mynance-service-api/pkg/utils"
 	"github.com/spf13/viper"
 	"log"
+	"os"
+	"path/filepath"
 )
 
 type Config struct {
@@ -14,14 +17,27 @@ type Config struct {
 }
 
 var AppConfig Config
+var logger = utils.Logger
 
 func InitConfig() error {
-	viper.SetConfigName(".env")
+	logger.Info("Setting configs...")
+	projectRoot, err := getProjectRoot()
+	if err != nil {
+		log.Fatalf("Error determining project root directory: %v", err)
+		return err
+	}
+
+	env := os.Getenv("APP_ENV")
+	if env == "" {
+		env = "dev"
+	}
+
+	viper.SetConfigName(".env." + env)
 	viper.SetConfigType("env")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath(projectRoot)
 	viper.AutomaticEnv()
 
-	err := viper.ReadInConfig()
+	err = viper.ReadInConfig()
 	if err != nil {
 		log.Fatalf("Error while reading config file %s", err)
 		return err
@@ -33,4 +49,30 @@ func InitConfig() error {
 	}
 
 	return nil
+}
+
+func getProjectRoot() (string, error) {
+	currentDir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	for {
+		if fileExists(filepath.Join(currentDir, ".env")) {
+			return currentDir, nil
+		}
+
+		parentDir := filepath.Dir(currentDir)
+		if parentDir == currentDir {
+			break
+		}
+		currentDir = parentDir
+	}
+
+	return "", os.ErrNotExist
+}
+
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	return err == nil && !info.IsDir()
 }
