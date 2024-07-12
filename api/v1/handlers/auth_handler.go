@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,9 +27,6 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, utils.GenerateErrorResponse("Invalid request payload"))
 		return
 	}
-
-	fmt.Printf("Ecco la password: %v", req.Password)
-	fmt.Printf(" Ecco la email: %v", req.Email)
 
 	token, err := h.Service.Authenticate(req.Email, req.Password)
 	if err != nil {
