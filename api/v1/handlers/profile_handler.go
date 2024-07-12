@@ -21,18 +21,18 @@ func NewProfileHandler(s *service.ProfileService) *ProfileHandler {
 func (h *ProfileHandler) GetProfile(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, utils.GenerateFailedResponse(err.Error()))
+		c.JSON(http.StatusBadRequest, utils.GenerateErrorResponse(err.Error()))
 		return
 	}
 
 	profile, err := h.Service.GetProfileByUserID(c.Request.Context(), id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.GenerateFailedResponse(err.Error()))
+		c.JSON(http.StatusInternalServerError, utils.GenerateErrorResponse(err.Error()))
 		return
 	}
 
 	if profile == nil {
-		c.JSON(http.StatusNotFound, utils.GenerateFailedResponse("Profile not found"))
+		c.JSON(http.StatusNotFound, utils.GenerateErrorResponse("Profile not found"))
 		return
 	}
 
@@ -43,18 +43,18 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 	var profile models.Profile
 	userID, err := strconv.ParseInt(c.Param("user_id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, utils.GenerateFailedResponse(err.Error()))
+		c.JSON(http.StatusBadRequest, utils.GenerateErrorResponse(err.Error()))
 		return
 	}
 
 	if err := c.ShouldBindJSON(&profile); err != nil {
-		c.JSON(http.StatusBadRequest, utils.GenerateFailedResponse(err.Error()))
+		c.JSON(http.StatusBadRequest, utils.GenerateErrorResponse(err.Error()))
 		return
 	}
 
 	updatedProfile, err := h.Service.UpdateProfile(c.Request.Context(), userID, &profile)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.GenerateFailedResponse(err.Error()))
+		c.JSON(http.StatusInternalServerError, utils.GenerateErrorResponse(err.Error()))
 		return
 	}
 

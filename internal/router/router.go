@@ -1,10 +1,11 @@
 package router
 
 import (
+	"os"
+
 	"github.com/gin-gonic/gin"
 	v1 "github.com/iacopoghilardi/mynance-service-api/api/v1/routes"
-	"github.com/iacopoghilardi/mynance-service-api/pkg/utils"
-	"os"
+	"github.com/iacopoghilardi/mynance-service-api/internal/utils"
 )
 
 var logger = utils.Logger

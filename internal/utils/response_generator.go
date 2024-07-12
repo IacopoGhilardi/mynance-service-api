@@ -18,7 +18,7 @@ func GenerateSuccessResponse[T any](data T) successHttpResponse[T] {
 	}
 }
 
-func GenerateFailedResponse[T any](data T) failHttpResponse[T] {
+func GenerateErrorResponse[T any](data T) failHttpResponse[T] {
 	return failHttpResponse[T]{
 		Status: "KO",
 		Error:  data,

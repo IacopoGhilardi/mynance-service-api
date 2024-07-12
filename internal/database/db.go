@@ -1,39 +1,42 @@
 package database
 
 import (
-	"github.com/iacopoghilardi/mynance-service-api/pkg/utils"
+	"github.com/iacopoghilardi/mynance-service-api/internal/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
-var logger = utils.Logger
+var log = utils.Logger
 var db *gorm.DB
 
 func ConnectToDb(connectionStr string) error {
-	logger.Info("Connecting to db")
+	log.Info("Connecting to db")
 	var err error
 
-	db, err = gorm.Open(postgres.Open(connectionStr), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(connectionStr), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
-		logger.Error("Failed to open the DB connection: ", err)
+		log.Error("Failed to open the DB connection: ", err)
 		return err
 	}
 
-	logger.Info("Successfully connected to the database")
+	log.Info("Successfully connected to the database")
 	return nil
 }
 
 func CloseDb() {
 	sqlDB, err := db.DB()
 	if err != nil {
-		logger.Error("Error getting the underlying SQL DB: ", err)
+		log.Error("Error getting the underlying SQL DB: ", err)
 		return
 	}
 
 	if err := sqlDB.Close(); err != nil {
-		logger.Error("Error closing the database: ", err)
+		log.Error("Error closing the database: ", err)
 	} else {
-		logger.Info("Database connection closed")
+		log.Info("Database connection closed")
 	}
 }
 

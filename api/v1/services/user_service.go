@@ -3,10 +3,9 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
 
+	"github.com/iacopoghilardi/mynance-service-api/internal/utils"
 	"github.com/iacopoghilardi/mynance-service-api/models"
-	"github.com/iacopoghilardi/mynance-service-api/pkg/utils"
 	"gorm.io/gorm"
 )
 
@@ -21,7 +20,20 @@ func NewUserService(db *gorm.DB) *UserService {
 func (s *UserService) CreateUser(ctx context.Context, user *models.User) error {
 	utils.Logger.Info("Creating new user: " + user.Email)
 	db := s.db.WithContext(ctx)
-	result := db.Create(user)
+
+	hashedPassword, err := utils.HashPassword(user.Password)
+	if err != nil {
+		utils.Logger.Error("Error hashing password")
+		return err
+	}
+
+	userModel := models.User{
+		Email:             user.Email,
+		Password:          hashedPassword,
+		IsProfileComplete: user.IsProfileComplete,
+	}
+
+	result := db.Create(userModel)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -50,11 +62,7 @@ func (s *UserService) UpdateUser(ctx context.Context, id int64, user *models.Use
 		return err
 	}
 
-	fmt.Println("Arrivi qua a fare l'update")
 	existingUser.Email = user.Email
-
-	fmt.Println("Arrivi qua a fare l'update: " + user.Email)
-	existingUser.Password = user.Password
 
 	if err := db.Save(&existingUser).Error; err != nil {
 		return err

@@ -1,19 +1,21 @@
 package config
 
 import (
-	"github.com/iacopoghilardi/mynance-service-api/pkg/utils"
-	"github.com/spf13/viper"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/iacopoghilardi/mynance-service-api/internal/utils"
+	"github.com/spf13/viper"
 )
 
 type Config struct {
-	DBHost string `mapstructure:"DB_HOST"`
-	DBPort int    `mapstructure:"DB_PORT"`
-	DBUser string `mapstructure:"DB_USER"`
-	DBPass string `mapstructure:"DB_PASS"`
-	DBName string `mapstructure:"DB_NAME"`
+	DBHost    string `mapstructure:"DB_HOST"`
+	DBPort    int    `mapstructure:"DB_PORT"`
+	DBUser    string `mapstructure:"DB_USER"`
+	DBPass    string `mapstructure:"DB_PASS"`
+	DBName    string `mapstructure:"DB_NAME"`
+	JwtSecret string `mapstructure:"JWT_SECRET"`
 }
 
 var AppConfig Config
