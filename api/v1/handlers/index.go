@@ -8,6 +8,7 @@ type V1ApiHandlers struct {
 	UserHandler    *UserHandler
 	ProfileHandler *ProfileHandler
 	AuthHandler    *AuthHandler
+	BankHandler    *BankHandler
 }
 
 var V1Handlers V1ApiHandlers
@@ -17,5 +18,6 @@ func InitHandlers() {
 		UserHandler:    NewUserHandler(service.V1Services.UserService),
 		ProfileHandler: NewProfileHandler(service.V1Services.ProfileService),
 		AuthHandler:    NewAuthHandler(service.V1Services.AuthService),
+		BankHandler:    NewBankHandler(service.V1Services.BankService),
 	}
 }

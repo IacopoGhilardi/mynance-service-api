@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -80,10 +79,6 @@ func (suite *EndpointTestSuite) TestUserEndpoints() {
 	firstUser := users[0]
 	assert.Equal(t, user.Email, firstUser.Email)
 	assert.Equal(t, 1, len(users))
-	fmt.Println("Created user: " + firstUser.Email)
-	fmt.Printf("Created user: %v", firstUser.ID)
-
-	fmt.Println("Ora update")
 
 	updatedUser := models.User{
 		Email:    "henry2@gmail.com",
@@ -98,9 +93,6 @@ func (suite *EndpointTestSuite) TestUserEndpoints() {
 	users, _ = service.V1Services.UserService.GetAllUsers(suite.ctx)
 	firstUser = users[0]
 	assert.Equal(t, updatedUser.Email, firstUser.Email)
-	fmt.Println("Updated user: " + firstUser.Email)
-	fmt.Println("Updated user: " + updatedUser.Email)
-	fmt.Printf("Updated user length: %v", len(users))
 	//assert.Equal(t, 1, len(users))
 	//
 	//suite.router.ServeHTTP(w, updateReq)
@@ -130,7 +122,6 @@ func (suite *EndpointTestSuite) TestCreateUserEndpoint() {
 	assert.Equal(t, "OK", response["status"])
 
 	users, _ := service.V1Services.UserService.GetAllUsers(suite.ctx)
-	fmt.Printf("Users length: %v", len(users))
 	assert.Equal(t, 1, len(users))
 }
 
@@ -157,7 +148,6 @@ func (suite *EndpointTestSuite) TestUpdateUser() {
 	assert.Equal(t, "OK", response["status"])
 
 	users, _ := service.V1Services.UserService.GetAllUsers(suite.ctx)
-	fmt.Printf("Users length: %v", len(users))
 	assert.Equal(t, 1, len(users))
 }
 

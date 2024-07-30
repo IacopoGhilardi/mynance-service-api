@@ -6,6 +6,7 @@ type V1ApiServices struct {
 	UserService    *UserService
 	ProfileService *ProfileService
 	AuthService    *AuthService
+	BankService    *BankService
 }
 
 var V1Services V1ApiServices
@@ -17,6 +18,7 @@ func InitServices() {
 		UserService:    NewUserService(db),
 		ProfileService: NewProfileService(db),
 		AuthService:    NewAuthService(db),
+		BankService:    NewBankService(db),
 	}
 
 }

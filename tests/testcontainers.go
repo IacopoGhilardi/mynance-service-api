@@ -36,7 +36,6 @@ func CreatePostgresContainer(ctx context.Context) (*PostgresContainer, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get connection string: %w", err)
 	}
-	fmt.Printf("Database connection string: %s\n", connStr)
 
 	return &PostgresContainer{
 		PostgresContainer: pgContainer,
