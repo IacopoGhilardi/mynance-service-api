@@ -14,5 +14,8 @@ func SetupBankRoutes(version *gin.RouterGroup) {
 	})
 
 	bankRoutes.GET("/", bankHandler.GetAllBanks)
+	bankRoutes.POST("/", bankHandler.GetAllBanks)
+	bankRoutes.POST("/", bankHandler.GetAllBanks)
+	bankRoutes.POST("/", bankHandler.GetAllBanks)
 
 }

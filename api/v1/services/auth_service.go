@@ -76,19 +76,24 @@ func (s *AuthService) Register(email, password string) (*models.User, error) {
 	return &newUser, nil
 }
 
-func verifyToken(tokenString string) error {
+func (s *AuthService) VerifyToken(tokenString string) (*models.User, error) {
 	configs := appConfig.AppConfig
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return configs.JwtSecret, nil
+		return []byte(configs.JwtSecret), nil
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if !token.Valid {
-		return errors.New("Invalid token")
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userID := claims["sub"].(float64) // Extract user ID
+		var user models.User
+		if err := s.db.First(&user, uint(userID)).Error; err != nil {
+			return nil, errors.New("user not found")
+		}
+		return &user, nil
 	}
 
-	return nil
+	return nil, errors.New("Unauthorized")
 }

@@ -17,6 +17,12 @@ func NewBankHandler(s *service.BankService) *BankHandler {
 	return &BankHandler{Service: s}
 }
 
+func (h *BankHandler) GetBankToken(c *gin.Context) {
+	fmt.Println("Banks Token")
+
+	c.JSON(http.StatusOK, utils.GenerateSuccessResponse(""))
+}
+
 func (h *BankHandler) GetAllBanks(c *gin.Context) {
 	fmt.Println("Banks list")
 
