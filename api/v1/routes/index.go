@@ -13,4 +13,5 @@ func SetupRoutes(r *gin.Engine) {
 
 	SetupUserRoutes(prefix)
 	SetupAuthRoutes(prefix)
+	SetupBankRoutes(prefix)
 }

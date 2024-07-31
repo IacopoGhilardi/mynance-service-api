@@ -5,31 +5,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/iacopoghilardi/mynance-service-api/internal/config"
-)
-
-var GoCardlessClient Client
-
-const (
-	baseURL = "https://ob.nordigen.com/api/v2"
 )
 
 type Client struct {
 	secretKey   string
 	secretToken string
+	httpClient  *http.Client
+	baseURL     string
 }
 
-func init() {
-	configs := config.AppConfig
-
-	GoCardlessClient = *NewClient(configs.GocardlessSecret, config.AppConfig.GocardlessToken)
-}
-
-func NewClient(secretKey string, secretToken string) *Client {
+func NewClient(secretKey, secretToken string) *Client {
 	return &Client{
 		secretKey:   secretKey,
 		secretToken: secretToken,
+		httpClient: &http.Client{
+			Timeout: 10 * time.Second,
+		},
+		baseURL: "https://bankaccountdata.gocardless.com/api/v2",
 	}
 }
 
@@ -39,33 +34,48 @@ type TokenResponse struct {
 }
 
 func (c *Client) GetAccessToken() (*TokenResponse, error) {
-	url := fmt.Sprintf("%s/token/new/", baseURL)
+	url := fmt.Sprintf("%s/token/new/", c.baseURL)
 	payload := map[string]string{
-		"secret_id": c.secretKey,
+		"secret_id":  c.secretKey,
+		"secret_key": c.secretToken,
 	}
+
+	fmt.Printf("SECRET: %v", c.secretKey)
+	fmt.Printf("SECRET: %v", c.secretToken)
+
 	body, err := json.Marshal(payload)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to marshal request payload: %w", err)
 	}
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute request: %w", err)
 	}
 	defer resp.Body.Close()
 
+	fmt.Printf("STATUS CODE: %v", resp.Status)
+	fmt.Printf("STATUS CODE: %v", resp.Body)
+
+	// if resp.StatusCode != http.StatusOK {
+	// 	return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	// }
+
 	var tokenResponse TokenResponse
-	err = json.NewDecoder(resp.Body).Decode(&tokenResponse)
-	if err != nil {
-		return nil, err
+	if err := json.NewDecoder(resp.Body).Decode(&tokenResponse); err != nil {
+		return nil, fmt.Errorf("failed to decode response body: %w", err)
 	}
 
 	return &tokenResponse, nil
+}
+
+func NewGoCardlessClient() *Client {
+	configs := config.AppConfig
+	return NewClient(configs.GocardlessSecret, configs.GocardlessToken)
 }
