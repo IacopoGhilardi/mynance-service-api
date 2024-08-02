@@ -9,6 +9,6 @@ WORKDIR /app
 
 RUN go build -o main ./cmd/mynance-service-api/main.go
 
-EXPOSE 8080
+EXPOSE 3000
 
 CMD [ "/app/main" ]

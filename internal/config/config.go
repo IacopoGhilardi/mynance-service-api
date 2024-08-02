@@ -10,14 +10,15 @@ import (
 )
 
 type Config struct {
-	DBHost           string `mapstructure:"DB_HOST"`
-	DBPort           int    `mapstructure:"DB_PORT"`
-	DBUser           string `mapstructure:"DB_USER"`
-	DBPass           string `mapstructure:"DB_PASS"`
-	DBName           string `mapstructure:"DB_NAME"`
-	JwtSecret        string `mapstructure:"JWT_SECRET"`
-	GocardlessSecret string `mapstructure:"GOCARDLESS_SECRET"`
-	GocardlessToken  string `mapstructure:"GOCARDLESS_TOKEN"`
+	DBHost            string `mapstructure:"DB_HOST"`
+	DBPort            int    `mapstructure:"DB_PORT"`
+	DBUser            string `mapstructure:"DB_USER"`
+	DBPass            string `mapstructure:"DB_PASS"`
+	DBName            string `mapstructure:"DB_NAME"`
+	JwtSecret         string `mapstructure:"JWT_SECRET"`
+	GocardlessSecret  string `mapstructure:"GOCARDLESS_SECRET"`
+	GocardlessToken   string `mapstructure:"GOCARDLESS_TOKEN"`
+	GocardlessBaseUrl string `mapstructure:"GOCARDLESS_BASE_URL"`
 }
 
 var AppConfig Config

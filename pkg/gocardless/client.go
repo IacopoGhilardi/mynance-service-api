@@ -24,24 +24,23 @@ func NewClient(secretKey, secretToken string) *Client {
 		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
-		baseURL: "https://bankaccountdata.gocardless.com/api/v2",
+		baseURL: config.AppConfig.GocardlessBaseUrl,
 	}
 }
 
 type TokenResponse struct {
-	Access  string `json:"access"`
-	Refresh string `json:"refresh"`
+	Access         string `json:"access"`
+	AccessExpires  int    `json:"access_expires"`
+	Refresh        string `json:"refresh"`
+	RefreshExpires int    `json:"refresh_expires"`
 }
 
 func (c *Client) GetAccessToken() (*TokenResponse, error) {
 	url := fmt.Sprintf("%s/token/new/", c.baseURL)
 	payload := map[string]string{
-		"secret_id":  c.secretKey,
-		"secret_key": c.secretToken,
+		"secret_key": c.secretKey,
+		"secret_id":  c.secretToken,
 	}
-
-	fmt.Printf("SECRET: %v", c.secretKey)
-	fmt.Printf("SECRET: %v", c.secretToken)
 
 	body, err := json.Marshal(payload)
 	if err != nil {
@@ -60,12 +59,9 @@ func (c *Client) GetAccessToken() (*TokenResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	fmt.Printf("STATUS CODE: %v", resp.Status)
-	fmt.Printf("STATUS CODE: %v", resp.Body)
-
-	// if resp.StatusCode != http.StatusOK {
-	// 	return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-	// }
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("service error: %d", resp.StatusCode)
+	}
 
 	var tokenResponse TokenResponse
 	if err := json.NewDecoder(resp.Body).Decode(&tokenResponse); err != nil {

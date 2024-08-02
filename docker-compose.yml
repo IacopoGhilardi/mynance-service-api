@@ -18,9 +18,9 @@ services:
   api:
     build: .
     ports:
-      - 8080:8080
+      - 3000:3000
     environment:
-      - PORT=8080
+      - PORT=3000
       - DB_HOST=db
       - DB_USER=mydget
       - DB_PASSWORD=mypassword
